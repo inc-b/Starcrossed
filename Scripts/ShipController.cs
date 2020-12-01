@@ -33,7 +33,7 @@ public class ShipController : MonoBehaviour
     GameObject closestStation;
     float closestStationDistance;
 
-    const float stationConnectDistance = 150f;
+    const float stationConnectDistance = 50f;
 
     const float speedLimitRadiusMulti = 5f; // The radius of a moon is multiplied by this to calculate where the moon's sphere of influence starts
     const float speedLimit = 10f; // Max speed in m/s while inside the moon's sphere of influence (ends up x10)
@@ -237,6 +237,7 @@ public class ShipController : MonoBehaviour
             // OUT OF FUEL
             outOfFuel.enabled = true;
             if (Input.GetKeyUp("1") && !stationText.enabled) {
+                spaceStationHandler.LoadTom();
                 ConnectToTom();
             }
         }
@@ -353,6 +354,7 @@ public class ShipController : MonoBehaviour
             }
         } else {
             // We're too far away from a moon and entering intersatellary space - mark that and trigger a music fade based on whatever location we were last in
+            closestStationDistance = Mathf.Infinity;
             if (myLocation == Location.satellary) {
                 jukebox.CrossFade("satellary", "intersatellary");
             } else if (myLocation == Location.station) {
@@ -386,6 +388,7 @@ public class ShipController : MonoBehaviour
                 boxSpawner.spawning = true;
                 myLocation = Location.satellary;
                 jukebox.CrossFade("station", "satellary");
+               
             }
         }
     }
@@ -406,7 +409,7 @@ public class ShipController : MonoBehaviour
 
     // Find the closest space station
     private void ClosestSpaceStation() {
-        // Check each station to find which is the closest
+        // Check each station to find which is the closest if our last station is out of range
         foreach (GameObject station in stations) {
             float stationDistance = Vector3.Distance(transform.position, station.transform.position);
             if (stationDistance < closestStationDistance) {
@@ -418,6 +421,7 @@ public class ShipController : MonoBehaviour
                 }
             }
         }
+
     }
 
     // Physics stuff
@@ -434,9 +438,13 @@ public class ShipController : MonoBehaviour
 
         // Rotate ship
         rb.AddTorque(Vector3.up * Input.GetAxis("Horizontal") * rotateSpeed * Time.deltaTime);
+        if (Input.GetAxis("Horizontal") != 0) {
+            questSystem.SteerQuestDone();
+        }
 
         // Thrusters on/off
         if (Input.GetButtonUp("Jump")) {
+            questSystem.SpaceToggleQuestDone();
             mainThrustOn = !mainThrustOn;
         } else {
             if (!mainThrustOn) {
@@ -503,11 +511,16 @@ public class ShipController : MonoBehaviour
         // Check if we're buying from Tom
         if (stationData.isTom) {
             if (shopItem.name == "Fuel") {
-                // Player can always buy fuel but may go into debt
-                valueOfItem = shopItem.itemValue * fuelMulti;
-                wallet -= (int)valueOfItem;
-                fuelBought = true;
-                soundEffects.Positive();
+                if (stationData.stock[0] > 0) {
+                    // Player can always buy fuel but may go into debt
+                    valueOfItem = shopItem.itemValue * fuelMulti;
+                    wallet -= (int)valueOfItem;
+                    fuelBought = true;
+                    soundEffects.Positive();
+                    stationData.stock[0]--;
+                    stock[0]++;
+                }
+
             } else {
                 // Tom won't sell anything else
             }
@@ -634,6 +647,7 @@ public class ShipController : MonoBehaviour
         for (int i = 0; i < 8; i++) {
             stock[i] = initialStock;
         }
+        stock[0] = (int)Mathf.Round(fuel / fuelStockValue);
         camStartPos = new Vector3(6.1f, 6.69f, -3.19f);
         camStartRot = new Vector3(24.31f, -44.9f, 0f);
         camTransform.localPosition = camStartPos;

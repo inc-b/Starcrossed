@@ -38,6 +38,8 @@ public class SpaceStationHandler : MonoBehaviour
 
     public GameObject fuelCross;
 
+    public StationData tomData;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -147,6 +149,11 @@ public class SpaceStationHandler : MonoBehaviour
     public void LoadNewStation(StationData newStationData) {
         videoPlayer.clip = newStationData.videoClip;
         stationData = newStationData;
+    }
+
+    public void LoadTom() {
+        videoPlayer.clip = tomData.videoClip;
+        stationData = tomData;
     }
 
     public void ConnectToStation(StationData station) {

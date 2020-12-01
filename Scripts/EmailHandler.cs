@@ -91,7 +91,7 @@ public class EmailHandler : MonoBehaviour
         // open up the email UI and start taking input
         isActive = true;
         emailUI.SetActive(true);
-        selectedEmail = 0;
+        selectedEmail = currentEmail;
 
         emailReading = false;
         emailReader.StopEmail();

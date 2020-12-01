@@ -38,6 +38,7 @@ public class SaveLoad : MonoBehaviour
         int currentQuest = questSystem.SaveGame();
         PlayerPrefs.SetInt("CurrentEmail", currentEmail);
         PlayerPrefs.SetInt("CurrentQuest", currentQuest);
+        PlayerPrefs.Save();
     }
 
     public void LoadGame() {

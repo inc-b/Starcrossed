@@ -40,25 +40,25 @@ public class QuestSystem : MonoBehaviour
     }
 
     public void ZoomQuestDone() {
-        if (currentQuest == 0) {
-            AdvanceQuest();
-        }
-    }
-
-    public void MoonQuestDone() {
-        if (currentQuest == 1) {
-            AdvanceQuest();
-        }
-    }
-
-    public void SpaceStationQuestDone() {
         if (currentQuest == 2) {
             AdvanceQuest();
         }
     }
 
+    public void MoonQuestDone() {
+        if (currentQuest == 3) {
+            AdvanceQuest();
+        }
+    }
+
+    public void SpaceStationQuestDone() {
+        if (currentQuest == 4) {
+            AdvanceQuest();
+        }
+    }
+
     public void BuySellQuestDone() {
-        if(currentQuest == 3) {
+        if(currentQuest == 5) {
             AdvanceQuest();
         }
     }
@@ -66,5 +66,17 @@ public class QuestSystem : MonoBehaviour
     public void DisplayQuests() {
         questLabel.SetActive(true);
         questLog.SetActive(true);
+    }
+
+    public void SpaceToggleQuestDone() {
+        if (currentQuest == 0) {
+            AdvanceQuest();
+        }
+    }
+
+    public void SteerQuestDone() {
+        if (currentQuest ==1) {
+            AdvanceQuest();
+        }
     }
 }
